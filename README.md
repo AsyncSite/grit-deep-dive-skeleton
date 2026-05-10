@@ -1,46 +1,34 @@
-# Grit Deep Dive Skeleton
+# Grit Deep Dive Skeleton · Distributed Lock
 
-Grit Deep Dive의 도메인 과제 스켈레톤을 모아두는 레포입니다.
+현재 브랜치: `domain/distributed-lock`
 
-## 이름
+동시 결제 상황에서 Redis 기반 분산락으로 재고 1개를 안전하게 차감하는 과제입니다.
 
-정식 레포명은 `grit-deep-dive-skeleton`입니다.
-
-`skeletone`은 오타입니다.
-
-## 브랜치 모델
-
-`main`은 인덱스와 운영 규칙만 보관합니다.
-
-도메인별 과제 스켈레톤은 브랜치로 분리합니다.
-
-| 브랜치 | 도메인 | 상태 |
-|--------|--------|------|
-| `domain/distributed-lock` | Redis 분산락 | 초안 |
-| `domain/cache-consistency` | 캐시 일관성 | 예정 |
-| `domain/zset-explosion` | ZSET 폭주 | 예정 |
-| `domain/ttl-bomb` | TTL 폭탄 | 예정 |
-| `domain/pubsub-to-streams` | Pub/Sub to Streams | 예정 |
-
-## 참여자 사용 흐름
+## 빠른 시작
 
 ```bash
-git clone https://github.com/AsyncSite/grit-deep-dive-skeleton.git
-cd grit-deep-dive-skeleton
-git switch domain/distributed-lock
+docker compose up -d redis
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -e .
+pytest -q
 ```
 
-참여자는 도메인 브랜치를 fork한 뒤 본인 풀이 브랜치에서 PR을 올립니다.
+처음 테스트는 실패합니다. 실패가 과제의 출발점입니다.
 
-## PR 원칙
+구현 대상은 `domains/distributed-lock/src/grit_skeleton/redis_lock.py`입니다.
 
-PR은 책 내용을 다시 요약하는 자리가 아닙니다.
+## 과제 문서
 
-각 PR은 다음 3섹션만 채웁니다.
+- [문제 정의](domains/distributed-lock/problem.md)
+- [수락 기준](domains/distributed-lock/acceptance.md)
+- [리뷰 루브릭](domains/distributed-lock/docs/review-rubric.md)
 
-1. 가설: 어느 분기에 섰는가
-2. 풀이: 스켈레톤 위에 무엇을 추가하거나 바꿨는가
-3. 검증: 어떤 부하, 장애, 벤치마크로 확인했는가
+## PR 제출
+
+PR은 `.github/PULL_REQUEST_TEMPLATE.md`의 3섹션만 채웁니다.
+
+책 내용을 다시 작문하지 않습니다. 가설, 풀이, 검증만 남깁니다.
 
 ## 라이선스
 

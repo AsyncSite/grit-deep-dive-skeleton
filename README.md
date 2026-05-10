@@ -2,21 +2,18 @@
 
 현재 브랜치: `domain/distributed-lock`
 
-동시 결제 상황에서 Redis 기반 분산락으로 재고 1개를 안전하게 차감하는 과제입니다.
+Spring Boot와 Redis로 분산락을 구현해 재고 1개를 안전하게 차감하는 과제입니다.
 
 ## 빠른 시작
 
 ```bash
 docker compose up -d redis
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -e .
-pytest -q
+./gradlew test
 ```
 
 처음 테스트는 실패합니다. 실패가 과제의 출발점입니다.
 
-구현 대상은 `domains/distributed-lock/src/grit_skeleton/redis_lock.py`입니다.
+구현 대상은 `src/main/java/com/teamgrit/deepdive/skeleton/adapter/redis/RedisDistributedLock.java`입니다.
 
 ## 과제 문서
 

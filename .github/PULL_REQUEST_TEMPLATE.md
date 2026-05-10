@@ -12,7 +12,7 @@
 
 ### 체크리스트
 
-- [ ] `pytest -q` 통과
+- [ ] `./gradlew test` 통과
 - [ ] wrong-token release가 다른 사람의 lock을 지우지 않음
 - [ ] 재고 1개에 동시 요청 N개가 들어와도 성공은 정확히 1건
 - [ ] lock TTL과 작업 시간이 충돌하는 케이스를 설명함

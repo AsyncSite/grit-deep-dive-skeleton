@@ -5,7 +5,7 @@
 - `RedisLock.acquire()`가 lock 획득 성공/실패를 구분한다.
 - 같은 key에 대해 동시에 두 lease가 발급되지 않는다.
 - `RedisLock.release()`가 본인 token일 때만 lock을 지운다.
-- `pytest -q`가 통과한다.
+- `./gradlew test`가 통과한다.
 
 ## L2
 

@@ -14,7 +14,7 @@
 
 ## 구현 대상
 
-`src/grit_skeleton/redis_lock.py`의 `RedisLock`을 구현합니다.
+`src/main/java/com/teamgrit/deepdive/skeleton/adapter/redis/RedisDistributedLock.java`의 `acquire`와 `release`를 구현합니다.
 
 기본 방향:
 
@@ -27,13 +27,10 @@
 
 ```bash
 docker compose up -d redis
-python3 -m venv .venv
-. .venv/bin/activate
-pip install -e .
-pytest -q
+./gradlew test
 ```
 
-처음에는 `NotImplementedError`로 실패합니다.
+처음에는 `UnsupportedOperationException`으로 실패합니다.
 
 ## 책 좌표
 

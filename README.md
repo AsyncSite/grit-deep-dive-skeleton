@@ -1,36 +1,25 @@
-# Grit Deep Dive Skeleton
+# Grit Deep Dive Skeleton · Pub/Sub to Streams
 
-Grit Deep Dive의 도메인 과제 스켈레톤을 모아두는 레포입니다.
+현재 브랜치: `domain/pubsub-to-streams`
 
-## 이름
+Redis Pub/Sub disconnect 시 메시지가 유실되는 상황을 Streams consumer group으로 바꾸는 Spring Boot 과제입니다.
 
-정식 레포명은 `grit-deep-dive-skeleton`입니다.
-
-`skeletone`은 오타입니다.
-
-## 브랜치 모델
-
-`main`은 인덱스와 운영 규칙만 보관합니다.
-
-도메인별 과제 스켈레톤은 브랜치로 분리합니다.
-
-| 브랜치 | 도메인 | 상태 |
-|--------|--------|------|
-| `domain/distributed-lock` | Redis 분산락 | 초안 |
-| `domain/cache-consistency` | 캐시 일관성 | 예정 |
-| `domain/zset-explosion` | ZSET 폭주 | 예정 |
-| `domain/ttl-bomb` | TTL 폭탄 | 예정 |
-| `domain/pubsub-to-streams` | Pub/Sub to Streams | 예정 |
-
-## 참여자 사용 흐름
+## 빠른 시작
 
 ```bash
-git clone https://github.com/AsyncSite/grit-deep-dive-skeleton.git
-cd grit-deep-dive-skeleton
-git switch domain/distributed-lock
+docker compose up -d redis
+./gradlew test
 ```
 
-참여자는 도메인 브랜치를 fork한 뒤 본인 풀이 브랜치에서 PR을 올립니다.
+처음 테스트는 실패합니다. 실패가 과제의 출발점입니다.
+
+구현 대상은 `src/main/java/com/teamgrit/deepdive/skeleton/adapter/redis/RedisReliableEventStream.java`입니다.
+
+## 과제 문서
+
+- [문제 정의](domains/pubsub-to-streams/problem.md)
+- [수락 기준](domains/pubsub-to-streams/acceptance.md)
+- [리뷰 루브릭](domains/pubsub-to-streams/docs/review-rubric.md)
 
 ## PR 원칙
 

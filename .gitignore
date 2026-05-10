@@ -5,6 +5,10 @@ __pycache__/
 .ruff_cache/
 .DS_Store
 *.pyc
+.gradle/
+build/
+out/
 data/
 dump.rdb
 appendonlydir/
+*.iml

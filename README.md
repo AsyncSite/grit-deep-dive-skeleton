@@ -16,11 +16,11 @@ Grit Deep Dive의 도메인 과제 스켈레톤을 모아두는 레포입니다.
 
 | 브랜치 | 도메인 | 상태 |
 |--------|--------|------|
-| `domain/distributed-lock` | Redis 분산락 | 초안 |
-| `domain/cache-consistency` | 캐시 일관성 | 예정 |
-| `domain/zset-explosion` | ZSET 폭주 | 예정 |
-| `domain/ttl-bomb` | TTL 폭탄 | 예정 |
-| `domain/pubsub-to-streams` | Pub/Sub to Streams | 예정 |
+| `domain/distributed-lock` | Redis 분산락 | Spring Boot 초안 |
+| `domain/cache-consistency` | 캐시 일관성 | Spring Boot 초안 |
+| `domain/zset-explosion` | ZSET 폭주 | Spring Boot 초안 |
+| `domain/ttl-bomb` | TTL 폭탄 | Spring Boot 초안 |
+| `domain/pubsub-to-streams` | Pub/Sub to Streams | Spring Boot 초안 |
 
 ## 참여자 사용 흐름
 
@@ -31,6 +31,17 @@ git switch domain/distributed-lock
 ```
 
 참여자는 도메인 브랜치를 fork한 뒤 본인 풀이 브랜치에서 PR을 올립니다.
+
+각 도메인 브랜치는 독립 Spring Boot 3 / Java 21 프로젝트입니다.
+
+공통 실행 흐름:
+
+```bash
+docker compose up -d redis
+./gradlew test
+```
+
+초기 테스트는 의도적으로 실패합니다. 실패 지점이 참여자가 구현할 계약입니다.
 
 ## PR 원칙
 

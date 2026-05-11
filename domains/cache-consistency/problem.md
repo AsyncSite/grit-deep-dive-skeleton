@@ -15,7 +15,7 @@ cache-aside 구조에서 update 이후 stale cache가 남지 않게 만듭니다
 - primary store는 과제 단순화를 위해 in-memory store입니다.
 - Redis는 cache 계층으로만 사용합니다.
 - 회사 코드, 회사 데이터, 실제 결제 API를 사용하지 않습니다.
-- 구현 언어는 Java 21, 프레임워크는 Spring Boot로 고정합니다.
+- 구현 언어는 Java 25, 프레임워크는 Spring Boot로 고정합니다.
 
 ## 금지
 

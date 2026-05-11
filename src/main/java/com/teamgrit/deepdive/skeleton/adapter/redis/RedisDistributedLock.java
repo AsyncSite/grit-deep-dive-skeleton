@@ -3,13 +3,26 @@ package com.teamgrit.deepdive.skeleton.adapter.redis;
 import com.teamgrit.deepdive.skeleton.application.DistributedLock;
 import com.teamgrit.deepdive.skeleton.domain.LockLease;
 import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RedisDistributedLock implements DistributedLock {
+
+    private static final DefaultRedisScript<Long> RELEASE_SCRIPT = new DefaultRedisScript<>(
+            """
+            if redis.call('get', KEYS[1]) == ARGV[1] then
+              return redis.call('del', KEYS[1])
+            end
+            return 0
+            """,
+            Long.class
+    );
 
     private final StringRedisTemplate redisTemplate;
 
@@ -22,24 +35,23 @@ public class RedisDistributedLock implements DistributedLock {
         String key = key(name);
         String token = UUID.randomUUID().toString();
 
-        /*
-         * TODO:
-         * - Use one Redis command: SET key token NX PX ttl.
-         * - Return Optional.of(new LockLease(...)) only when Redis replies OK.
-         * - Return Optional.empty() when another owner already holds the lock.
-         */
-        throw new UnsupportedOperationException("implement Redis SET NX PX acquire for " + key);
+        Boolean acquired = redisTemplate.opsForValue().setIfAbsent(key, token, ttl);
+        if (!Boolean.TRUE.equals(acquired)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new LockLease(
+                key,
+                token,
+                ttl.toMillis(),
+                Instant.now().toEpochMilli()
+        ));
     }
 
     @Override
     public boolean release(LockLease lease) {
-        /*
-         * TODO:
-         * - Use Lua so GET + DEL is atomic.
-         * - Delete the key only when the stored token equals lease.token().
-         * - Return false when the key expired or another owner holds it.
-         */
-        throw new UnsupportedOperationException("implement token-checked Lua release");
+        Long deleted = redisTemplate.execute(RELEASE_SCRIPT, List.of(lease.key()), lease.token());
+        return Long.valueOf(1).equals(deleted);
     }
 
     private String key(String name) {

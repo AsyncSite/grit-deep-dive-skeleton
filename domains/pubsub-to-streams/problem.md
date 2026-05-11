@@ -15,7 +15,7 @@ Pub/Sub 방식의 유실 가능성을 Redis Streams consumer group 방식으로 
 - Redis 단일 인스턴스를 사용합니다.
 - Kafka로 옮기는 것은 이번 과제의 구현 범위가 아닙니다.
 - 회사 코드, 회사 데이터, 실제 주문 이벤트를 사용하지 않습니다.
-- 구현 언어는 Java 21, 프레임워크는 Spring Boot로 고정합니다.
+- 구현 언어는 Java 25, 프레임워크는 Spring Boot로 고정합니다.
 
 ## 금지
 

@@ -9,13 +9,22 @@ public class JitteredTtlPolicy implements TtlPolicy {
 
     @Override
     public Duration ttlFor(String key, Duration baseTtl) {
-        /*
-         * TODO:
-         * - Spread TTL between 80% and 120% of baseTtl.
-         * - Prefer deterministic jitter from key hash so repeated writes for
-         *   the same key do not move unpredictably.
-         * - Never return zero or negative TTL.
-         */
-        throw new UnsupportedOperationException("implement jittered TTL policy");
+        long baseMillis = Math.max(1, baseTtl.toMillis());
+        long minMillis = Math.max(1, baseMillis * 80 / 100);
+        long maxMillis = Math.max(minMillis, baseMillis * 120 / 100);
+        long spread = maxMillis - minMillis;
+        long offset = spread == 0 ? 0 : mixedHash(key) % (spread + 1);
+
+        return Duration.ofMillis(minMillis + offset);
+    }
+
+    private long mixedHash(String key) {
+        int hash = key.hashCode();
+        hash ^= hash >>> 16;
+        hash *= 0x7feb352d;
+        hash ^= hash >>> 15;
+        hash *= 0x846ca68b;
+        hash ^= hash >>> 16;
+        return Integer.toUnsignedLong(hash);
     }
 }

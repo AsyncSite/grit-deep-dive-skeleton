@@ -32,7 +32,7 @@ git switch domain/distributed-lock
 
 참여자는 도메인 브랜치를 fork한 뒤 본인 풀이 브랜치에서 PR을 올립니다.
 
-각 도메인 브랜치는 독립 Spring Boot 3 / Java 21 프로젝트입니다.
+각 도메인 브랜치는 독립 Spring Boot 4 / Java 25 프로젝트입니다.
 
 공통 실행 흐름:
 

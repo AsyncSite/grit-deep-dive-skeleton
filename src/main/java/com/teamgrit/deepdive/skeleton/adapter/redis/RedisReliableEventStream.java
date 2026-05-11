@@ -3,6 +3,14 @@ package com.teamgrit.deepdive.skeleton.adapter.redis;
 import com.teamgrit.deepdive.skeleton.application.ReliableEventStream;
 import com.teamgrit.deepdive.skeleton.domain.StreamEvent;
 import java.util.List;
+import java.util.Map;
+import org.springframework.data.redis.RedisSystemException;
+import org.springframework.data.redis.connection.stream.Consumer;
+import org.springframework.data.redis.connection.stream.PendingMessagesSummary;
+import org.springframework.data.redis.connection.stream.ReadOffset;
+import org.springframework.data.redis.connection.stream.RecordId;
+import org.springframework.data.redis.connection.stream.StreamOffset;
+import org.springframework.data.redis.connection.stream.StreamReadOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -17,50 +25,51 @@ public class RedisReliableEventStream implements ReliableEventStream {
 
     @Override
     public String append(String stream, String payload) {
-        /*
-         * TODO:
-         * - Use XADD.
-         * - Store payload field.
-         * - Return Redis stream message id.
-         */
-        throw new UnsupportedOperationException("implement Redis Streams append");
+        RecordId id = redisTemplate.opsForStream().add(stream, Map.of("payload", payload));
+        if (id == null) {
+            throw new IllegalStateException("Redis did not return a stream id");
+        }
+        return id.getValue();
     }
 
     @Override
     public void createGroupIfAbsent(String stream, String group) {
-        /*
-         * TODO:
-         * - Use XGROUP CREATE.
-         * - Treat BUSYGROUP as success.
-         */
-        throw new UnsupportedOperationException("implement consumer group creation");
+        try {
+            redisTemplate.opsForStream().createGroup(stream, ReadOffset.from("0-0"), group);
+        } catch (RedisSystemException e) {
+            if (!String.valueOf(e.getMessage()).contains("BUSYGROUP")) {
+                throw e;
+            }
+        }
     }
 
     @Override
     public List<StreamEvent> readNew(String stream, String group, String consumer, int count) {
-        /*
-         * TODO:
-         * - Read new messages with consumer group.
-         * - Do not ack inside read.
-         */
-        throw new UnsupportedOperationException("implement consumer group read");
+        var records = redisTemplate.opsForStream().read(
+                Consumer.from(group, consumer),
+                StreamReadOptions.empty().count(count),
+                StreamOffset.create(stream, ReadOffset.lastConsumed())
+        );
+        if (records == null) {
+            return List.of();
+        }
+
+        return records.stream()
+                .map(record -> new StreamEvent(
+                        record.getId().getValue(),
+                        String.valueOf(record.getValue().get("payload"))
+                ))
+                .toList();
     }
 
     @Override
     public void ack(String stream, String group, String messageId) {
-        /*
-         * TODO:
-         * - XACK the processed message.
-         */
-        throw new UnsupportedOperationException("implement stream ack");
+        redisTemplate.opsForStream().acknowledge(stream, group, messageId);
     }
 
     @Override
     public long pendingCount(String stream, String group) {
-        /*
-         * TODO:
-         * - Return XPENDING total count.
-         */
-        throw new UnsupportedOperationException("implement pending count");
+        PendingMessagesSummary summary = redisTemplate.opsForStream().pending(stream, group);
+        return summary.getTotalPendingMessages();
     }
 }

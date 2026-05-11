@@ -15,7 +15,7 @@ TTL jitter를 적용해 cache 만료 시각을 분산합니다.
 - Redis 단일 인스턴스를 사용합니다.
 - stale-while-revalidate 구현은 선택입니다.
 - 회사 코드, 회사 데이터, 실제 트래픽 로그를 사용하지 않습니다.
-- 구현 언어는 Java 21, 프레임워크는 Spring Boot로 고정합니다.
+- 구현 언어는 Java 25, 프레임워크는 Spring Boot로 고정합니다.
 
 ## 금지
 

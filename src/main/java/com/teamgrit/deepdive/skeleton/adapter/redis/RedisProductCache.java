@@ -2,6 +2,7 @@ package com.teamgrit.deepdive.skeleton.adapter.redis;
 
 import com.teamgrit.deepdive.skeleton.application.ProductCache;
 import com.teamgrit.deepdive.skeleton.domain.ProductSnapshot;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Optional;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,32 +19,33 @@ public class RedisProductCache implements ProductCache {
 
     @Override
     public Optional<ProductSnapshot> read(String productId) {
-        /*
-         * TODO:
-         * - Read cache key product:{id}.
-         * - Parse value format "version:price".
-         * - Return Optional.empty() on miss.
-         */
-        throw new UnsupportedOperationException("implement Redis cache read");
+        String value = redisTemplate.opsForValue().get(key(productId));
+        if (value == null) {
+            return Optional.empty();
+        }
+
+        String[] parts = value.split(":", 2);
+        if (parts.length != 2) {
+            redisTemplate.delete(key(productId));
+            return Optional.empty();
+        }
+
+        return Optional.of(new ProductSnapshot(
+                productId,
+                Long.parseLong(parts[0]),
+                new BigDecimal(parts[1])
+        ));
     }
 
     @Override
     public void write(ProductSnapshot snapshot, Duration ttl) {
-        /*
-         * TODO:
-         * - Store value format "version:price".
-         * - Set TTL in the same Redis write.
-         */
-        throw new UnsupportedOperationException("implement Redis cache write");
+        String value = snapshot.version() + ":" + snapshot.price().toPlainString();
+        redisTemplate.opsForValue().set(key(snapshot.productId()), value, ttl);
     }
 
     @Override
     public void evict(String productId) {
-        /*
-         * TODO:
-         * - Delete only this product cache key.
-         */
-        throw new UnsupportedOperationException("implement Redis cache evict");
+        redisTemplate.delete(key(productId));
     }
 
     private String key(String productId) {
